@@ -48,7 +48,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
         self.setWindowTitle("Yolo上位机")
         self.ser = serial.Serial()
         self.port_check()
-        self.setWindowIcon(QIcon("images/UI/logo.jpg"))
+        self.setWindowIcon(QIcon("logo.jpg"))
 
         # 接收数据和发送数据数目置零
         self.data_num_received = 0
@@ -67,7 +67,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
         self.stopEvent.clear()
         self.pushButton_streaming.setEnabled(False)
         self.pushButton_loadmp4.setEnabled(False)
-        self.label_video.setPixmap(QPixmap("images/UI/yolo.jpg"))
+        self.label_video.setPixmap(QPixmap("yolo.jpg"))
 
         self.label_video.setScaledContents(True)
         self.vid_source = '0'
@@ -99,7 +99,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
     def reset_vid(self):
         self.pushButton_streaming.setEnabled(True)
         self.pushButton_loadmp4.setEnabled(True)
-        self.label_video.setPixmap(QPixmap("images/UI/yolo.jpg"))
+        self.label_video.setPixmap(QPixmap("yolo.jpg"))
 
         self.label_video.setScaledContents(True)
         self.vid_source = '0'
@@ -168,14 +168,14 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                                                      'txt(*.txt)')  # 前面是地址，后面是文件类型,得到输入地址的文件名和地址txt(*.txt*.xls);;image(*.png)不同类别
         file = open(filepath, 'w')
         print(filepath)
-        with open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", "r") as f:
+        with open("temp.txt", "r") as f:
             txt = f.read()
 
         file.write(txt)
 
     def save_xls(self):
 
-        with open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", "r") as f:
+        with open("temp.txt", "r") as f:
             xls = f.readlines()
         book = xlwt.Workbook(encoding='utf-8', style_compression=0)
         sheet = book.add_sheet('number', cell_overwrite_ok=True)
@@ -194,27 +194,27 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
         fileName, fileType = QFileDialog.getOpenFileName(self, 'Choose file', '', '*.jpg *.png *.tif *.jpeg')
         if fileName:
             suffix = fileName.split(".")[-1]
-            save_path = osp.join("images/tmp", "tmp_upload." + suffix)
+            save_path = osp.join("tmp", "tmp_upload." + suffix)
             shutil.copy(fileName, save_path)
             # 应该调整一下图片的大小，然后统一防在一起
             im0 = cv2.imread(save_path)
             resize_scale = self.output_size / im0.shape[0]
             im0 = cv2.resize(im0, (0, 0), fx=resize_scale, fy=resize_scale)
-            cv2.imwrite("images/tmp/upload_show_result.jpg", im0)
-            # self.right_img.setPixmap(QPixmap("images/tmp/single_result.jpg"))
+            cv2.imwrite("tmp/upload_show_result.jpg", im0)
+            # self.right_img.setPixmap(QPixmap("tmp/single_result.jpg"))
             self.img2predict = fileName
-            self.left_img.setPixmap(QPixmap("images/tmp/upload_show_result.jpg"))
+            self.left_img.setPixmap(QPixmap("tmp/upload_show_result.jpg"))
             self.left_img.setScaledContents(True)
 
             # todo 上传图片之后右侧的图片重置，
-            self.right_img.setPixmap(QPixmap("images/UI/logo.jpg"))
+            self.right_img.setPixmap(QPixmap("logo.jpg"))
             self.right_img.setScaledContents(True)
     '''
     ***检测图片***
     '''
     def detect_img(self):
         # 清空文本
-        open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", 'w').close()
+        open("temp.txt", 'w').close()
         model = self.model
         output_size = self.output_size
         source = self.img2predict  # file/dir/URL/glob, 0 for webcam
@@ -317,7 +317,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                                 str_box = annotator.box_label(xyxy, label, color=colors(c, True))
 
                                 t = str(xyxy)+str(label)
-                                with open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", "a") as f:
+                                with open("temp.txt", "a") as f:
                                     f.write("第"+ str(seen) +"帧 : "+str_box + "\n")
                                 self.textBrowser_pic.setText(t)
                                 #if save_crop:
@@ -333,10 +333,10 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                     # Save results (image with detections)
                     resize_scale = output_size / im0.shape[0]
                     im0 = cv2.resize(im0, (0, 0), fx=resize_scale, fy=resize_scale)
-                    cv2.imwrite("images/tmp/single_result.jpg", im0)
+                    cv2.imwrite("tmp/single_result.jpg", im0)
                     # 目前的情况来看，应该只是ubuntu下会出问题，但是在windows下是完整的，所以继续
 
-                    self.right_img.setPixmap(QPixmap("images/tmp/single_result.jpg"))
+                    self.right_img.setPixmap(QPixmap("tmp/single_result.jpg"))
                     self.right_img.setScaledContents(True)
     # 视频检测，逻辑基本一致，有两个功能，分别是检测摄像头的功能和检测视频文件的功能，先做检测摄像头的功能。
 
@@ -392,7 +392,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
     # 视频和摄像头的主函数是一样的，不过是传入的source不同罢了
     def detect_vid(self):
         # 清空文本
-        open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", 'w').close()
+        open("temp.txt", 'w').close()
         # pass
         model = self.model
         output_size = self.output_size
@@ -470,7 +470,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                 s += '%gx%g ' % im.shape[2:]  # print string
                 gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
                 imc = im0.copy() if save_crop else im0  # for save_crop
-                cv2.imwrite("images/tmp/single_org_vid.jpg", im0)
+                cv2.imwrite("tmp/single_org_vid.jpg", im0)
                 annotator = Annotator(im0, line_width=line_thickness, example=str(names))
                 if len(det):
                     # Rescale boxes from img_size to im0 size
@@ -507,7 +507,7 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                             label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                             str_box = annotator.box_label(xyxy, label, color=colors(c, True))
                             t = str(xyxy)+str(label)
-                            with open("P:\\Item\\Yolov5\\yolov5-mask-42-master\\temp.txt", "a") as f:
+                            with open("temp.txt", "a") as f:
                                 f.write("第"+ str(seen) +"帧 : "+str_box + "\n")
 
                                 self.textBrowser_video.setText(str_box)
@@ -525,17 +525,17 @@ class MainWindows(QtWidgets.QWidget, Ui_Form):
                 frame = im0
                 resize_scale = output_size / frame.shape[0]
                 frame_resized = cv2.resize(frame, (0, 0), fx=resize_scale, fy=resize_scale)
-                cv2.imwrite("images/tmp/single_result_vid.jpg", frame_resized)
+                cv2.imwrite("tmp/single_result_vid.jpg", frame_resized)
 
 
                 #self.label_video.setPixmap(QPixmap("test.jpg"))
-                self.label_video.setPixmap(QPixmap("images/tmp/single_result_vid.jpg"))
+                self.label_video.setPixmap(QPixmap("tmp/single_result_vid.jpg"))
                 self.label_video.setScaledContents(True)
 
                 # self.label_video
                 # if view_img:
                 # cv2.imshow(str(p), im0)
-                # self.label_video.setPixmap(QPixmap("images/tmp/single_result_vid.jpg"))
+                # self.label_video.setPixmap(QPixmap("tmp/single_result_vid.jpg"))
                 # cv2.waitKey(1)  # 1 millisecond
 
             if cv2.waitKey(25) & self.stopEvent.is_set() == True:
